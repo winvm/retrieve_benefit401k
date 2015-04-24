@@ -1,10 +1,13 @@
 require 'mechanize'
 require 'logger'
 require 'optparse'
+require 'rubyXL'
+require 'active_support'
+require 'active_support/core_ext'
 
 RUI_ASSET_KEYS = ["PT_NEN","PT_SHISAN","PT_KOU_RUI","PT_KOU_SON","PT_KYO_RUI","PT_KYO_SON"]
 ASSET_KEYS = ["PT_SHN_SY","PT_SHN_ME","PT_HIRITU","PT_SURYO","PT_TANKA","PT_HYOU_GAK","PT_UKE_GAK","PT_HYOU_SON"]
-
+XLSX_FILE = "./benefit401k.xlsx"
 
 def acquire_asset(page,data,ii,inputName,keyValues)
   page.search('input[@name='+inputName+']').each do | asset|
@@ -33,9 +36,46 @@ def acquire_asset(page,data,ii,inputName,keyValues)
   return ii
 end
 
-params = ARGV.getopts('',"id:","pw:")
-UserId = params["id"].to_s
-PassWdS = params["pw"].to_s
+puts <<EOS
+
+
+
+
+     エクセルファイル オープン
+
+
+
+
+EOS
+workbook = RubyXL::Parser.parse(XLSX_FILE)
+worksheet = workbook[0]
+yesterday = Date.yesterday
+row=0
+for rowData in worksheet do
+  puts "row = " + row.to_s + ":" + rowData[0].value.to_s
+  if( "日付" == rowData[0].value.to_s ) then
+    row += 1
+    next
+  end
+  date = Date.strptime(rowData[0].value.to_s,'%Y年%m月%d日')
+  if( yesterday == date ) then
+    puts "既に" + yesterday.to_s + "のデータは登録済みです。"
+    exit
+  end
+  break if( nil == rowData[0].value )
+  row += 1
+end
+puts "new row = " + row.to_s
+
+params = ARGV.getopts('',"account:./account.txt","xlsx:./benefit401k.xlsx")
+accountFile = open(params["account"].to_s, "r")
+if( !accountFile ) then
+  puts "アカウント情報ファイルが開けませんでした。"
+  exit
+end
+UserId = accountFile.gets.chomp
+PassWdS = accountFile.gets.chomp
+accountFile.close
 
 agent = Mechanize.new
 agent.log = Logger.new $stderr
@@ -85,7 +125,8 @@ homePage = loginPage.form_with(:name => 'signonform') do |form|
 end.submit
 puts "agent.cookies = " + agent.cookies.to_s
 puts "homePage.title = " + homePage.title.to_s
-
+# もしログインエラーなら、homePage.title = ログインエラーと表示され、次のclickにてNoMethodErrorで終了する。
+# ログインエラーのハンドリングはしない。
 puts "損益状況click"
 detailPage = homePage.link_with(:text => '損益状況').click
 data = Array.new(11){Array.new(8)}
@@ -126,4 +167,27 @@ else
   puts "error:確かめNG"
   exit
 end
+
+puts <<EOS
+
+
+
+
+     エクセルファイル作成
+
+
+
+
+EOS
+
+for column in 0..(RUI_ASSET_KEYS.size-1) do
+  worksheet.add_cell(row,column,data[0][column])
+end
+for jj in 1..(ii-1) do
+  for column in 0..(ASSET_KEYS.size-1) do
+    worksheet.add_cell(row,RUI_ASSET_KEYS.size+ASSET_KEYS.size*(jj-1)+column,data[jj][column])
+  end
+end
+workbook.write(XLSX_FILE)
+
 puts :end
