@@ -2,15 +2,15 @@ require 'rubyXL'
 
 RUI_ASSET_KEYS = ["PT_NEN","PT_SHISAN","PT_KOU_RUI","PT_KOU_SON","PT_KYO_RUI","PT_KYO_SON"]
 ASSET_KEYS = ["PT_SHN_SY","PT_SHN_ME","PT_HIRITU","PT_SURYO","PT_TANKA","PT_HYOU_GAK","PT_UKE_GAK","PT_HYOU_SON"]
-SOURCE_XLSX_FILE = "./Book2.xlsx"
-# SOURCE_XLSX_FILE = "./benefit401k_20150204-20150422.xlsx"
+# SOURCE_XLSX_FILE = "./Book2.xlsx"
+SOURCE_XLSX_FILE = "./benefit401k_20150204-20150422.xlsx"
 DEST_XLSX_FILE = "./benefit401k.xlsx"
 
 source_book = RubyXL::Parser.parse(SOURCE_XLSX_FILE)
 dest_book = RubyXL::Parser.parse(DEST_XLSX_FILE)
-data = Array.new(11){Array.new(8)}
 
 source_book.each do |source_sheet|
+  data = Array.new(11){Array.new(8)}
   puts "+"*30 + "入力" + "+"*30
   puts "sheet_name = #{source_sheet.sheet_name}"
   puts "source_sheet[36][1].value.gsub(/^（|現在）$/,"") + '時点' = #{source_sheet[36][1].value.gsub(/^（|現在）$/,"") + '時点'}"
