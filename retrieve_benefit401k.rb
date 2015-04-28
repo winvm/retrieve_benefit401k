@@ -71,7 +71,6 @@ end
 puts "new row = #{row.to_s}"
 puts "latest = #{latest.to_s}\n"
 
-
 account_file = open(params["account"].to_s, "r")
 if( !account_file ) then
   puts "アカウント情報ファイルが開けませんでした。"
