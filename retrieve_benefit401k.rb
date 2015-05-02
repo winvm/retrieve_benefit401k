@@ -82,7 +82,7 @@ account_file.close
 
 agent = Mechanize.new
 agent.log = Logger.new $stderr
-OpenSSL::debug = true
+OpenSSL::debug = false
 
 puts "agent.user_agent = " + agent.user_agent
 puts "agent.verify_mode = " + agent.verify_mode.to_s
