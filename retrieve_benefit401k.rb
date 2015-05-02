@@ -249,7 +249,7 @@ for jj in 1..ii-1 do
       puts "jj = #{jj}"
       puts "sheet_name = #{sheet.sheet_name}"
       puts "sheet[0][0].value = #{sheet[0][0].value}"
-      puts "data[jj][1] = #{data[jj][1]}"
+      puts "data[jj][1]       = #{data[jj][1]}"
       here = 0
       sheet.each do |tmp|
         if( tmp[0].value == data[0][0] ) then
