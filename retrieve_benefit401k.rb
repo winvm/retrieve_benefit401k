@@ -270,7 +270,7 @@ for jj in 1..ii-1 do
     end
     sheet_count += 1
   end
-  if( (ii-1) != sheet_count ) then
+  if( (count+1) != sheet_count ) then
     puts "sheet_count = #{sheet_count}"
     puts "エラー? ダブり?"
   end
