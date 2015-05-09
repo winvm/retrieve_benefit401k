@@ -124,7 +124,7 @@ puts "\nlogin_page.title = " + login_page.title.to_s
 case login_page.title
   when "確定拠出年金サイトへログイン"
     puts "login画面入手OK"
-  when "システムメンテナンス中\n"
+  when "システムメンテナンス中"
     puts "\nシステムメンテナンス中\n"
     exit
   else
