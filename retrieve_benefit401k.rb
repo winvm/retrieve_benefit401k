@@ -29,7 +29,7 @@ def acquire_asset(page,data,ii,input_name,key_values)
       else
         STDERR.puts "error:target = " + target
         data[ii][jj] = nil
-        exit
+        exit 1
       end
       jj+=1
     end
@@ -70,7 +70,8 @@ log.debug("latest = #{latest.to_s}\n")
 account_file = open(params["account"].to_s, "r")
 if( !account_file ) then
   log.error("アカウント情報ファイルが開けませんでした。")
-  exit 
+  STDERR.puts "error:アカウント情報ファイルが開けませんでした。"
+  exit 1
 end
 UserId = account_file.gets.chomp
 PassWdS = account_file.gets.chomp
@@ -138,7 +139,8 @@ my_desktop = home_page.search("div[@class='p-tx']").first.text
 log.info(my_desktop)
 if( !my_desktop.include?("様のデスクトップです。") ) then
   log.error("\nログインNG\n")
-  exit
+  STDERR.puts "\nログインNG\n"
+  exit 1
 end
 # もしログインエラーなら、home_page.title = ログインエラーと表示され、次のclickにてNoMethodErrorで終了する。
 # ログインエラーのハンドリングはしない。
@@ -186,7 +188,8 @@ if sum == data[0][1] then
   log.info("確かめOK")
 else
   log.fatal("error:確かめNG")
-  exit
+  STDERR.puts "error:確かめNG"
+  exit 1
 end
 
 if( latest == Date.strptime(data[0][0],'%Y年%m月%d日時点') )then
@@ -243,7 +246,9 @@ for jj in 1..ii-1 do
 end
 log.info("count = #{count}")
 if( (ii-1) != count ) then
-  log.fatal("error")
+  log.fatal("error:(ii-1) != count => ii=#{ii}, count=#{count}")
+  STDERR.puts "error:(ii-1) != count => ii=#{ii}, count=#{count}"
+  exit 1
 end
 
 workbook.write(XLSX_FILE)
