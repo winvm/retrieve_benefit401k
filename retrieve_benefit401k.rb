@@ -1,3 +1,5 @@
+#!ruby -KU
+# coding: utf-8
 require 'mechanize'
 require 'logger'
 require 'optparse'
