@@ -38,6 +38,10 @@ def acquire_asset(page,data,ii,input_name,key_values)
   return ii
 end
 
+log = Logger.new("benefit401k.log", "monthly")
+log.progname = "benefit401k"
+log.level = Logger::DEBUG
+
 params = ARGV.getopts('',"account:./account.txt","xlsx:#{XLSX_FILE}")
 puts <<EOS
 
@@ -81,10 +85,6 @@ end
 UserId = account_file.gets.chomp
 PassWdS = account_file.gets.chomp
 account_file.close
-
-log = Logger.new("benefit401k.log", "monthly")
-log.progname = "benefit401k"
-log.level = Logger::DEBUG
 
 agent = Mechanize.new
 agent.log = log
