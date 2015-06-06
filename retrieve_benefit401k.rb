@@ -82,8 +82,12 @@ UserId = account_file.gets.chomp
 PassWdS = account_file.gets.chomp
 account_file.close
 
+log = Logger.new("benefit401k.log", "monthly")
+log.progname = "benefit401k"
+log.level = Logger::DEBUG
+
 agent = Mechanize.new
-agent.log = Logger.new $stderr
+agent.log = log
 OpenSSL::debug = false
 
 puts "agent.user_agent = " + agent.user_agent
